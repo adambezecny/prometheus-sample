@@ -13,14 +13,14 @@ async fn about_handler() -> StdResult<impl Reply, Rejection> {
     let timer2 = Instant::now();
     sleep(Duration::from_millis(3000)).await;
     let call_duration = timer.stop_and_record();
-    let call_duration2 = timer2.elapsed().as_millis();
+    let call_duration2 = timer2.elapsed().as_millis() as f64;
     println!("DURATION {} sec", call_duration);
     println!("DURATION2 {} ms", call_duration2);
-    metrics::API_DURATION1_MS.observe(call_duration);
+    metrics::API_DURATION1_MS.observe(call_duration * 1000.0);
 
     metrics::API_DURATION2_MS
         .with_label_values(&[""])
-        .observe(call_duration * 1000.0);
+        .observe(call_duration2);
 
     Ok(warp::reply::with_status(
         "REST API is running here!!!",
